@@ -38,6 +38,16 @@ struct Config
     2 - STA (ssid = wifiSSID, pass = wifiPass)
 */
 
+void showConfig(const Config &config)
+{
+  Serial.println(config.deviceName);
+  Serial.println(config.wifiMode);
+  Serial.println(config.wifiSSID);
+  Serial.println(config.wifiPass);
+  Serial.println(config.plantName);
+  Serial.println(config.plant.d1_z1);
+}
+
 bool saveConfig(const Config &config)
 {
   File file = SPIFFS.open("/config.txt", "w");
@@ -84,6 +94,29 @@ bool saveConfig(const Config &config)
   file.close();
   return true;
 }
+
+void loadPlantConfig(Config &config)
+{
+  File plantFile = SPIFFS.open(String("/") + config.plantName + ".txt", "r");
+  String q = plantFile.readString();
+  Serial.println(q);
+  DynamicJsonBuffer jsonBuffer2;
+  JsonObject &plantJson = jsonBuffer2.parseObject(q);
+
+  config.plant.d1_z1 = plantJson["d1_z1"].as<int>();
+  config.plant.d1_z2 = plantJson["d1_z2"].as<int>();
+  config.plant.d1_z3 = plantJson["d1_z3"].as<int>();
+
+  config.plant.d2_z1 = plantJson["d2_z1"].as<int>();
+  config.plant.d2_z2 = plantJson["d2_z2"].as<int>();
+  config.plant.d2_z3 = plantJson["d2_z3"].as<int>();
+
+  config.plant.d3_z1 = plantJson["d3_z1"].as<int>();
+  config.plant.d3_z2 = plantJson["d3_z2"].as<int>();
+  config.plant.d3_z3 = plantJson["d3_z3"].as<int>();
+  plantFile.close();
+}
+
 bool loadConfig(Config &config)
 {
   File configFile = SPIFFS.open("/config.txt", "r");
@@ -113,23 +146,5 @@ bool loadConfig(Config &config)
   config.plantDay = root["plantDay"].as<int>();
   configFile.close();
 
-  File plantFile = SPIFFS.open(String("/") + config.plantName + ".txt", "r");
-  String q = plantFile.readString();
-  Serial.println(q);
-  DynamicJsonBuffer jsonBuffer2;
-  JsonObject &plantJson = jsonBuffer2.parseObject(q);
-
-  config.plant.d1_z1 = plantJson["d1_z1"].as<int>();
-  config.plant.d1_z2 = plantJson["d1_z2"].as<int>();
-  config.plant.d1_z3 = plantJson["d1_z3"].as<int>();
-
-  config.plant.d2_z1 = plantJson["d2_z1"].as<int>();
-  config.plant.d2_z2 = plantJson["d2_z2"].as<int>();
-  config.plant.d2_z3 = plantJson["d2_z3"].as<int>();
-
-  config.plant.d3_z1 = plantJson["d3_z1"].as<int>();
-  config.plant.d3_z2 = plantJson["d3_z2"].as<int>();
-  config.plant.d3_z3 = plantJson["d3_z3"].as<int>();
-
-  plantFile.close();
+  loadPlantConfig(config);
 }

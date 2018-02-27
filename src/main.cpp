@@ -47,6 +47,18 @@ void updateWifi()
   }
 }
 
+void saveData()
+{
+  server.send(200, "OK");
+  String body = String(server.arg("body"));
+  Serial.println(body);
+  config.plantName = body;
+  config.plantDay = 0;
+  loadPlantConfig(config);
+  saveConfig(config);
+  showConfig(config);
+}
+
 void setup()
 {
   Serial.begin(115200);
@@ -60,23 +72,19 @@ void setup()
       Serial.printf("FS File: %s", fileName.c_str());
     }
     Serial.printf("\n");
-  }+
+  }
+  +
 
-  
-  loadConfig(config);
-  Serial.println(config.deviceName);
-  Serial.println(config.wifiMode);
-  Serial.println(config.wifiSSID);
-  Serial.println(config.wifiPass);
-  Serial.println(config.plantName);
-  Serial.println(config.plant.d1_z1);
-  
+      loadConfig(config);
+
+  showConfig(config);
   updateWifi();
   fsb.init((&server));
-  server.on("/uploadConfig", HTTP_POST, [](){
-    server.send(200, "OK";)
+  server.on("/saveData", HTTP_POST, saveData);
+  server.on("/palntName", HTTP_GET, [](){
+    server.send(200, config.palntName);
   });
-  
+
   server.begin();
   // wifiEsp.ap(ssid, pass);
 }
