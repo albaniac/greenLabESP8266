@@ -1,0 +1,11 @@
+{
+    "terminal.integrated.env.linux": {
+        "PATH": "/home/vasily/.platformio/penv/bin:/home/vasily/.platformio/penv:/home/vasily/.nvm/versions/node/v8.9.4/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/usr/lib/jvm/java-8-oracle/bin:/usr/lib/jvm/java-8-oracle/db/bin:/usr/lib/jvm/java-8-oracle/jre/bin",
+        "PLATFORMIO_CALLER": "vscode"
+    },
+    "C_Cpp.errorSquiggles": "Disabled",
+    "files.associations": {
+        "array": "cpp",
+        "initializer_list": "cpp"
+    }
+}

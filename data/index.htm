@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Green Lab</title>
+    <link rel="stylesheet" href="materialize.min.css">
+    <script src="materialize.min.js"></script>
+    <script src="index.js"></script>
+    <style>
+        body {
+            background-color: #9CCC65;
+        }
+
+        .my-flex-container {
+            /* display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center; */
+        }
+
+        .main-block {
+            /* position: absolute; */
+            margin-top: 20px;
+            margin-left: 20px;
+            /* margin-right: -65%; */
+            /* transform: translate(-50%, -50%) */
+        }
+
+        .control-block {
+            position: fixed;
+            bottom: 20px;
+            right: 5%;
+            /* margin-right: -10%; */
+            /* transform: translate(-50%, -50%) */
+        }
+
+        /* .green {
+                background-color: #9CCC65;
+            } */
+
+        /* .orange {
+                background-color: #f57c00;
+            } */
+    </style>
+</head>
+
+<body onload="main()">
+
+    <div class="main-block row">
+        <div class="col s12">
+            <h3>Ваш
+                <b class="white-text">Green.Lab</b> готов</h4>
+        </div>
+        <div class="col s6">
+            <div class="input-field white-text">
+                <select class="white-text">
+                    <option class="white-text" value="" disabled selected>Выберете растение</option>
+                    <option class="white-text" value="1">Петрушка</option>
+                    <option class="white-text" value="2">Морковъ</option>
+                    <option class="white-text" value="3">Option 3</option>
+                </select>
+                <script>
+                    var elem = document.querySelector('select');
+                    var instance = M.FormSelect.init(elem, {});
+                </script>
+
+            </div>
+        </div>
+        <div class="col s6">
+            <a class="waves-effect waves-light btn green" id="save_button">Сохранить</a>
+        </div>
+        <div class="col s12">
+            <h5>Стадия роста</h5>
+        </div>
+
+    </div>
+    <div class="control-block">
+        <a class="waves-effect waves-light btn red" id="stop_button">Стоп</a>
+        <a class="waves-effect waves-light btn orange" id="pause_button">Пауза</a>
+        <a class="waves-effect btn white grey-text text-darken-4" id="p_button">Подобнее</a>
+    </div>
+</body>
+
+</html>

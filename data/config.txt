@@ -1,0 +1,9 @@
+{
+    "deviceName": "GreenLab-OK",
+    "wifiMode": 1,
+    "wifiSSID": "GreenLab-WiFi",
+    "wifiPass": "",
+    "plantState": 1,
+    "plantDay": 2,
+    "plantName": "petrushka"
+}
