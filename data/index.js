@@ -1,11 +1,15 @@
 var elem;
 var instance;
-const mr = {"morkov":"Морковь", "petrushka":"Петрушка", "salat":"Салат"};
+const mr = { "morkov": "Морковь", "petrushka": "Петрушка", "salat": "Салат" };
 function main() {
     elem = document.querySelector('select');
     instance = M.FormSelect.init(elem, {});
-    var d = getData('/palntName', 'get');
-    instance.input.value = mr[d];
+    getData('/plantName', 'GET', function (d) {
+        console.log(d);
+
+        instance.input.value = mr[d];
+    });
+
 
     var save_button = document.getElementById("save_button");
     var pause_button = document.getElementById("pause_button");
@@ -27,20 +31,30 @@ function main() {
     });
 }
 
-function getData(url, method) {
+function getData(url, method, callback) {
     var data;
 
     var xhr = new XMLHttpRequest();
-    xhr.open(method, url, false);
+    xhr.open(method, url, true);
 
     xhr.send();
+    xhr.onreadystatechange = function () { // (3)
+        if (xhr.readyState != 4) return;
 
-    if (xhr.status != 200) {
-        return false;
-    } else {
-        data = xhr.responseText;
-        return data;
+        // button.innerHTML = 'Готово!';
+
+        if (xhr.status != 200) {
+            alert(xhr.status + ': ' + xhr.statusText);
+        } else {
+            console.log(xhr.responseText);
+            callback(xhr.responseText)
+        }
+
     }
+
+    // data = xhr.responseText;
+    // return data;
+
 
 }
 
@@ -50,7 +64,7 @@ function sendData(url, data, method) {
 
     xhr.send(data);
 }
-const m = {"Морковь":"morkov", "Петрушка":"petrushka", "Салат":"salat"};
+const m = { "Морковь": "morkov", "Петрушка": "petrushka", "Салат": "salat" };
 function onSaveButton() {
 
     console.log(

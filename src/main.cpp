@@ -49,7 +49,7 @@ void updateWifi()
 
 void saveData()
 {
-  server.send(200, "OK");
+  server.send(200, "text/plain", "OK");
   String body = String(server.arg("body"));
   Serial.println(body);
   config.plantName = body;
@@ -57,6 +57,13 @@ void saveData()
   loadPlantConfig(config);
   saveConfig(config);
   showConfig(config);
+}
+
+void getPlantName()
+{
+  String cpn = String(config.plantName);
+  Serial.println(cpn);
+  server.send(200, "text/plain", cpn);
 }
 
 void setup()
@@ -73,17 +80,14 @@ void setup()
     }
     Serial.printf("\n");
   }
-  +
 
-      loadConfig(config);
+  loadConfig(config);
 
   showConfig(config);
   updateWifi();
   fsb.init((&server));
   server.on("/saveData", HTTP_POST, saveData);
-  server.on("/palntName", HTTP_GET, [](){
-    server.send(200, config.palntName);
-  });
+  server.on("/plantName", HTTP_GET, getPlantName);
 
   server.begin();
   // wifiEsp.ap(ssid, pass);
