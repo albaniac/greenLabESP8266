@@ -22,6 +22,9 @@
 
 SoftwareSerial swSer(4, 5, false, 256); //rx D2, tx D1
 
+boolean ssp = false;
+unsigned long pt = 0;
+
 /*
   wifiMode:
     0 - Off
@@ -36,40 +39,6 @@ WifiEsp wifie = WifiEsp();
 // WifiEsp wifi = new WifiEsp();
 ESP8266WebServer server(80);
 FSBrowser fsb;
-// U8GLIB_SH1106_128X64 u8g(U8G_I2C_OPT_NONE); // I2C / TWI
-// void draw(void)
-// {
-//   // graphic commands to redraw the complete screen should be placed here
-//   u8g.setFont(u8g_font_unifont);
-//   //u8g.setFont(u8g_font_osb21);
-//   u8g.drawStr(0, 22, "Hello World!");
-// }
-
-// void setup(void)
-// {
-// flip screen, if required
-// u8g.setRot180();
-
-// set SPI backup if required
-//u8g.setHardwareBackup(u8g_backup_avr_spi);
-
-// assign default color value
-
-// pinMode(8, OUTPUT);
-// }
-
-// void loop(void)
-// {
-//   // picture loop
-//   u8g.firstPage();
-//   do
-//   {
-//     draw();
-//   } while (u8g.nextPage());
-
-//   // rebuild the picture after some delay
-//   //delay(50);
-// }
 
 void updateWifi()
 {
@@ -94,7 +63,7 @@ void saveData()
   Serial.println(body);
   config.plantName = body;
   config.plantDay = 0;
-  config.plantState = 1; 
+  config.plantState = 1;
   loadPlantConfig(config);
   saveConfig(config);
   showConfig(config);
@@ -103,6 +72,9 @@ void saveData()
   swSer.print(String("^") + config.wifiSSID + "@");
   delay(2);
   swSer.print(config.plantName + " " + config.plant.d1_z1 + "@");
+  swSer.print("$start");
+  pt = millis();
+  ssp = true;
 }
 
 void getPlantName()
@@ -126,7 +98,10 @@ void stopPlant()
   swSer.print("   **Stop**@");
 
   server.send(200, "text/plain", "OK");
+  swSer.print("$stop");
 }
+
+
 
 void setup()
 {
@@ -143,24 +118,6 @@ void setup()
     }
     Serial.printf("\n");
   }
-  // Wire.pins(5, 4);
-
-  // if (u8g.getMode() == U8G_MODE_R3G3B2)
-  // {
-  //   u8g.setColorIndex(255); // white
-  // }
-  // else if (u8g.getMode() == U8G_MODE_GRAY2BIT)
-  // {
-  //   u8g.setColorIndex(3); // max intensity
-  // }
-  // else if (u8g.getMode() == U8G_MODE_BW)
-  // {
-  //   u8g.setColorIndex(1); // pixel on
-  // }
-  // else if (u8g.getMode() == U8G_MODE_HICOLOR)
-  // {
-  //   u8g.setHiColorByRGB(255, 255, 255);
-  // }
 
   loadConfig(config);
 
@@ -180,13 +137,45 @@ void setup()
   {
     swSer.print(config.plantName + "@");
   }
-  else{
+  else
+  {
     swSer.print("   **Stop**@");
   }
   // wifiEsp.ap(ssid, pass);
+  pt = millis();
 }
+
+// unsigned long pt = 0;
+boolean ssp2 = false;
 void loop()
 {
+  unsigned long nt = millis();
+  if (config.plantState == 1)
+  {
+    if (nt - pt > 6000 && ssp == true)
+    {
+      swSer.print("$on1");
+      delay(5);
+      swSer.print("$on2");
+      delay(5);
+      swSer.print("$on3");
+      ssp2 = true;
+      ssp = false;
+      pt = nt;
+    }
+    if (nt - pt > 6000 && ssp2 == true)
+    {
+      swSer.print("$off1");
+      delay(5);
+      swSer.print("$off2");
+      delay(5);
+      swSer.print("$off3");
+      ssp2 = false;
+      ssp = false;
+      pt = nt;
+    }
+  }
+
   // u8g.firstPage();
   // draw();
   server.handleClient();
