@@ -18,6 +18,10 @@
 #include "jsonConfig.h"
 #include "FSBrowser.h"
 
+#include <SoftwareSerial.h>
+
+SoftwareSerial swSer(4, 5, false, 256); //rx D2, tx D1
+
 /*
   wifiMode:
     0 - Off
@@ -32,7 +36,7 @@ WifiEsp wifie = WifiEsp();
 // WifiEsp wifi = new WifiEsp();
 ESP8266WebServer server(80);
 FSBrowser fsb;
-U8GLIB_SH1106_128X64 u8g(U8G_I2C_OPT_NONE); // I2C / TWI
+// U8GLIB_SH1106_128X64 u8g(U8G_I2C_OPT_NONE); // I2C / TWI
 // void draw(void)
 // {
 //   // graphic commands to redraw the complete screen should be placed here
@@ -43,15 +47,15 @@ U8GLIB_SH1106_128X64 u8g(U8G_I2C_OPT_NONE); // I2C / TWI
 
 // void setup(void)
 // {
-  // flip screen, if required
-  // u8g.setRot180();
+// flip screen, if required
+// u8g.setRot180();
 
-  // set SPI backup if required
-  //u8g.setHardwareBackup(u8g_backup_avr_spi);
+// set SPI backup if required
+//u8g.setHardwareBackup(u8g_backup_avr_spi);
 
-  // assign default color value
+// assign default color value
 
-  // pinMode(8, OUTPUT);
+// pinMode(8, OUTPUT);
 // }
 
 // void loop(void)
@@ -90,9 +94,15 @@ void saveData()
   Serial.println(body);
   config.plantName = body;
   config.plantDay = 0;
+  config.plantState = 1; 
   loadPlantConfig(config);
   saveConfig(config);
   showConfig(config);
+  swSer.print("&40@");
+  delay(2);
+  swSer.print(String("^") + config.wifiSSID + "@");
+  delay(2);
+  swSer.print(config.plantName + " " + config.plant.d1_z1 + "@");
 }
 
 void getPlantName()
@@ -102,9 +112,26 @@ void getPlantName()
   server.send(200, "text/plain", cpn);
 }
 
+void stopPlant()
+{
+  // String cpn = String();
+  // Serial.println(cpn);
+  config.plantState = 0;
+  config.plantName = "stop";
+  saveConfig(config);
+  swSer.print("&40@");
+  delay(2);
+  swSer.print(String("^") + config.wifiSSID + "@");
+  delay(2);
+  swSer.print("   **Stop**@");
+
+  server.send(200, "text/plain", "OK");
+}
+
 void setup()
 {
   Serial.begin(115200);
+  swSer.begin(115200);
   SPIFFS.begin();
   {
     Dir dir = SPIFFS.openDir("/");
@@ -141,9 +168,21 @@ void setup()
   updateWifi();
   fsb.init((&server));
   server.on("/saveData", HTTP_POST, saveData);
+  server.on("/stopPlant", HTTP_POST, stopPlant);
   server.on("/plantName", HTTP_GET, getPlantName);
 
   server.begin();
+  swSer.print("&40@");
+  delay(2);
+  swSer.print(String("^") + config.wifiSSID + "@");
+  delay(2);
+  if (config.plantState == 1)
+  {
+    swSer.print(config.plantName + "@");
+  }
+  else{
+    swSer.print("   **Stop**@");
+  }
   // wifiEsp.ap(ssid, pass);
 }
 void loop()

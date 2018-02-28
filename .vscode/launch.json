@@ -6,7 +6,7 @@
             "request": "launch",
             "cwd": "${workspaceFolder}",
             "name": "PlatformIO Debugger",
-            "target": "/home/vasily/Projects/greenLabProject/greenLabESP8266/.pioenvs/esp12e/firmware.elf",
+            "target": "/home/vasily/Projects/greenLabProject/greenLabESP8266/.pioenvs/nodemcuv2/firmware.elf",
             "gdbpath": "/home/vasily/.platformio/penv/bin/piodebuggdb",
             "autorun": [ "source .pioinit" ],
             "preLaunchTask": "PlatformIO: Pre-Debug",

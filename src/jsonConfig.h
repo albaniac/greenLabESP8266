@@ -97,24 +97,27 @@ bool saveConfig(const Config &config)
 
 void loadPlantConfig(Config &config)
 {
-  File plantFile = SPIFFS.open(String("/") + config.plantName + ".txt", "r");
-  String q = plantFile.readString();
-  Serial.println(q);
-  DynamicJsonBuffer jsonBuffer2;
-  JsonObject &plantJson = jsonBuffer2.parseObject(q);
+  if (config.plantState == 1)
+  {
+    File plantFile = SPIFFS.open(String("/") + config.plantName + ".txt", "r");
+    String q = plantFile.readString();
+    Serial.println(q);
+    DynamicJsonBuffer jsonBuffer2;
+    JsonObject &plantJson = jsonBuffer2.parseObject(q);
 
-  config.plant.d1_z1 = plantJson["d1_z1"].as<int>();
-  config.plant.d1_z2 = plantJson["d1_z2"].as<int>();
-  config.plant.d1_z3 = plantJson["d1_z3"].as<int>();
+    config.plant.d1_z1 = plantJson["d1_z1"].as<int>();
+    config.plant.d1_z2 = plantJson["d1_z2"].as<int>();
+    config.plant.d1_z3 = plantJson["d1_z3"].as<int>();
 
-  config.plant.d2_z1 = plantJson["d2_z1"].as<int>();
-  config.plant.d2_z2 = plantJson["d2_z2"].as<int>();
-  config.plant.d2_z3 = plantJson["d2_z3"].as<int>();
+    config.plant.d2_z1 = plantJson["d2_z1"].as<int>();
+    config.plant.d2_z2 = plantJson["d2_z2"].as<int>();
+    config.plant.d2_z3 = plantJson["d2_z3"].as<int>();
 
-  config.plant.d3_z1 = plantJson["d3_z1"].as<int>();
-  config.plant.d3_z2 = plantJson["d3_z2"].as<int>();
-  config.plant.d3_z3 = plantJson["d3_z3"].as<int>();
-  plantFile.close();
+    config.plant.d3_z1 = plantJson["d3_z1"].as<int>();
+    config.plant.d3_z2 = plantJson["d3_z2"].as<int>();
+    config.plant.d3_z3 = plantJson["d3_z3"].as<int>();
+    plantFile.close();
+  }
 }
 
 bool loadConfig(Config &config)

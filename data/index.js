@@ -6,9 +6,17 @@ function main() {
     instance = M.FormSelect.init(elem, {});
     getData('/plantName', 'GET', function (d) {
         console.log(d);
-
-        instance.input.value = mr[d];
+        if (d == "stop") {
+            document.getElementById("main_body").style.backgroundColor = "#ffffff";
+            document.getElementById("gotov").textContent = "готов";
+        }
+        else {
+            instance.input.value = mr[d];
+            document.getElementById("main_body").style.backgroundColor = "#9CCC65";
+            document.getElementById("gotov").textContent = "работает";
+        }
     });
+
 
 
     var save_button = document.getElementById("save_button");
@@ -66,7 +74,8 @@ function sendData(url, data, method) {
 }
 const m = { "Морковь": "morkov", "Петрушка": "petrushka", "Салат": "salat" };
 function onSaveButton() {
-
+    document.getElementById("main_body").style.backgroundColor = "#9CCC65";
+    document.getElementById("gotov").textContent = "работает";
     console.log(
         m[instance.input.value]
     );
@@ -77,5 +86,8 @@ function onPauseButton() {
 
 }
 function onStopButton() {
+    sendData('/stopPlant', '', 'POST');
+    document.getElementById("gotov").textContent = "готов";
 
+    document.getElementById("main_body").style.backgroundColor = "#ffffff";
 }
